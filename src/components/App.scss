@@ -1,0 +1,43 @@
+@import '../styles/variables';
+
+.main-header {
+  background: $off-black;
+  padding: $content-padding-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: 0 2px 3px rgba($off-black, .2);
+}
+
+
+.banner {
+  color: $grey;
+  font-style: italic;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  text-align: center;
+  transform: rotate(-10deg);
+
+  &__title {
+    font-weight: 700;
+    display: block;
+    color: #61dafb;
+  }
+
+  &__caption {
+    font-size: 22px;
+    display: block;
+  }
+}
+
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $content-padding-base;
+
+  > p {
+    text-align: center;
+  }
+}
