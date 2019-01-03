@@ -1,20 +1,30 @@
 /* eslint-disable global-require */
 
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-const webpackDevServerConfig = require('./webpackDevServer.config');
+const webpackDevServerConfig = require('./webpackDevServer.config')
 
 // Always serve from the root in development.
-const publicPath = '/';
-const appSrc = path.resolve(__dirname, './src');
-const appIndexJs = './src/index.js';
-const appIndexHtml = 'public/index.html';
+const publicPath = '/'
+const appSrc = path.resolve(__dirname, './src')
+const appIndexJs = './src/index.js'
+const appIndexHtml = 'public/index.html'
+
+const moduleFileExtensions = [
+  'web.mjs',
+  'mjs',
+  'web.js',
+  'js',
+  'json',
+  'web.jsx',
+  'jsx',
+]
 
 // Style files regexes
-const cssRegex = /\.css$/;
-const sassRegex = /\.(scss|sass)$/;
+const cssRegex = /\.css$/
+const sassRegex = /\.(scss|sass)$/
 
 // Common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -39,12 +49,12 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
         ],
       },
     },
-  ];
+  ]
   if (preProcessor) {
-    loaders.push(require.resolve(preProcessor));
+    loaders.push(require.resolve(preProcessor))
   }
-  return loaders;
-};
+  return loaders
+}
 
 module.exports = {
   mode: 'development',
@@ -58,7 +68,7 @@ module.exports = {
     publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: info => {
-      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/');
+      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
     },
   },
   optimization: {
@@ -68,15 +78,29 @@ module.exports = {
   },
   resolve: {
     modules: [path.resolve(__dirname, 'node_modules'), appSrc],
-    extensions: ['.js', '.jsx', '.json', '.css', '.scss', '.sass'],
+    extensions: moduleFileExtensions.map(ext => `.${ext}`),
   },
   module: {
     strictExportPresence: true,
     rules: [
       // Disable require.ensure as it's not a standard language feature.
       { parser: { requireEnsure: false } },
+      // First, run the linter before Babel processed the JS.
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|mjs|jsx)$/,
+        enforce: 'pre',
+        use: [
+          {
+            loader: require.resolve('eslint-loader'),
+            options: {
+              ignore: false,
+            },
+          },
+        ],
+        include: appSrc,
+      },
+      {
+        test: /\.(js|mjs|jsx)$/,
         include: appSrc,
         loader: require.resolve('babel-loader'),
         options: {
@@ -129,4 +153,4 @@ module.exports = {
     }),
   ],
   devServer: webpackDevServerConfig,
-};
+}

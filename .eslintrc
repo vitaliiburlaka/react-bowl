@@ -14,16 +14,12 @@
       "classes": true
     }
   },
-  "extends": [
-    "airbnb",
-    "prettier",
-    "prettier/react"
-  ],
-  "plugins": [
-    "prettier"
-  ],
+  "extends": ["airbnb", "prettier", "prettier/react"],
+  "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
+    "semi": ["error", "never"],
+    "no-console": "off",
     "import/no-extraneous-dependencies": [
       1,
       {
@@ -33,10 +29,7 @@
     "react/jsx-filename-extension": [
       1,
       {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
+        "extensions": [".js", ".jsx"]
       }
     ]
   }

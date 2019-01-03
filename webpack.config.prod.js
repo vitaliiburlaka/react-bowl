@@ -1,26 +1,36 @@
 /* eslint-disable object-shorthand */
 /* eslint-disable global-require */
 
-const path = require('path');
-const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const safePostCssParser = require('postcss-safe-parser');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const path = require('path')
+const webpack = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const safePostCssParser = require('postcss-safe-parser')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-const publicPath = '/';
-const appBuild = path.resolve(__dirname, 'dist');
-const appSrc = path.resolve(__dirname, './src');
-const appIndexJs = './src/index.js';
-const appIndexHtml = 'public/index.html';
-const shouldUseSourceMap = process.env.NODE_ENV !== 'production';
-const isEnvProduction = process.env.NODE_ENV === 'production';
+const publicPath = '/'
+const appBuild = path.resolve(__dirname, 'dist')
+const appSrc = path.resolve(__dirname, './src')
+const appIndexJs = './src/index.js'
+const appIndexHtml = 'public/index.html'
+const shouldUseSourceMap = process.env.NODE_ENV !== 'production'
+const isEnvProduction = process.env.NODE_ENV === 'production'
+
+const moduleFileExtensions = [
+  'web.mjs',
+  'mjs',
+  'web.js',
+  'js',
+  'json',
+  'web.jsx',
+  'jsx',
+]
 
 // Style files regexes
-const cssRegex = /\.css$/;
-const sassRegex = /\.(scss|sass)$/;
+const cssRegex = /\.css$/
+const sassRegex = /\.(scss|sass)$/
 
 // Common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -49,17 +59,17 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
         sourceMap: shouldUseSourceMap,
       },
     },
-  ];
+  ]
   if (preProcessor) {
     loaders.push({
       loader: require.resolve(preProcessor),
       options: {
         sourceMap: shouldUseSourceMap,
       },
-    });
+    })
   }
-  return loaders;
-};
+  return loaders
+}
 
 module.exports = env => ({
   mode: 'production',
@@ -124,15 +134,29 @@ module.exports = env => ({
   },
   resolve: {
     modules: [path.resolve(__dirname, 'node_modules'), appSrc],
-    extensions: ['.js', '.json', '.css', '.scss'],
+    extensions: moduleFileExtensions.map(ext => `.${ext}`),
   },
   module: {
     strictExportPresence: true,
     rules: [
       // Disable require.ensure as it's not a standard language feature.
       { parser: { requireEnsure: false } },
+      // First, run the linter before Babel processed the JS.
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|mjs|jsx)$/,
+        enforce: 'pre',
+        use: [
+          {
+            loader: require.resolve('eslint-loader'),
+            options: {
+              ignore: false,
+            },
+          },
+        ],
+        include: appSrc,
+      },
+      {
+        test: /\.(js|mjs|jsx)$/,
         include: appSrc,
         loader: require.resolve('babel-loader'),
         options: {
@@ -213,4 +237,4 @@ module.exports = env => ({
         analyzerMode: 'static',
       }),
   ].filter(Boolean),
-});
+})
