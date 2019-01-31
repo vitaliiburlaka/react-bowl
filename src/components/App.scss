@@ -7,9 +7,8 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  box-shadow: 0 2px 3px rgba($off-black, .2);
+  box-shadow: 0 2px 3px rgba($off-black, 0.2);
 }
-
 
 .banner {
   color: $grey;
@@ -30,7 +29,6 @@
     display: block;
   }
 }
-
 
 .main-content {
   max-width: 1200px;

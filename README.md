@@ -28,7 +28,7 @@ npm start
 
 ### Production build
 
-It will emit optimized and minified bundle to the ***./dist*** directory
+It will emit optimized and minified bundle to the **_./dist_** directory
 
 ```bash
 npm run build
