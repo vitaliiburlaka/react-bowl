@@ -15,9 +15,10 @@ module.exports = {
     },
   },
   extends: ['airbnb', 'prettier', 'prettier/react'],
-  plugins: ['prettier'],
+  plugins: ['prettier', 'react-hooks'],
   rules: {
     'prettier/prettier': 'error',
+    'react-hooks/rules-of-hooks': 'error',
     'no-console': 'off',
     'import/no-extraneous-dependencies': [
       1,
