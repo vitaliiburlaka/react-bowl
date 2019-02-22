@@ -88,12 +88,7 @@ module.exports = env => ({
     minimizer: [
       new TerserPlugin({
         terserOptions: {
-          parse: {
-            ecma: 8,
-          },
           compress: {
-            ecma: 5,
-            warnings: false,
             comparisons: false,
             inline: 2,
           },
@@ -101,8 +96,6 @@ module.exports = env => ({
             safari10: true,
           },
           output: {
-            ecma: 5,
-            comments: false,
             // Turned on because emoji and regex is not minified properly using default
             ascii_only: true,
           },
@@ -128,6 +121,7 @@ module.exports = env => ({
         },
       }),
     ],
+    runtimeChunk: true,
     splitChunks: {
       chunks: 'all',
     },
