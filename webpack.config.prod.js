@@ -7,6 +7,7 @@ const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const safePostCssParser = require('postcss-safe-parser')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
@@ -202,6 +203,7 @@ module.exports = env => ({
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(['dist/*']),
     new HtmlWebpackPlugin({
       inject: true,
       template: appIndexHtml,
