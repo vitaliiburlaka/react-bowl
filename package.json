@@ -31,7 +31,7 @@
   "author": "Vitalii Burlaka <vitalii.burlaka@gmail.com>",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@babel/runtime": "^7.3.1",
+    "@babel/runtime": "^7.3.4",
     "prop-types": "^15.7.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3"
