@@ -6,7 +6,7 @@ import './App.scss'
 function App() {
   return (
     <div className="App">
-      <header className="main-header">
+      <header className="App-header">
         <h1 className="banner">
           <span className="banner__title">
             react-bowl{' '}
@@ -16,14 +16,10 @@ function App() {
           </span>
           <span className="banner__caption">An React Boilerplate</span>
         </h1>
-      </header>
-
-      <div className="main-content">
-        <p>Welcome to the `react-bowl` - An React Boilerplate.</p>
         <p>
           <code>Let the Code begins</code>
         </p>
-      </div>
+      </header>
     </div>
   )
 }

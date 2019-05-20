@@ -1,21 +1,25 @@
-@import '../styles/variables';
-
-.main-header {
-  background: $off-black;
-  padding: $content-padding-base;
+.App-header {
+  background: #1e1f20;
+  min-height: 100vh;
+  padding: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  box-shadow: 0 2px 3px rgba($off-black, 0.2);
+  box-shadow: 0 2px 3px rgba(#1e1f20, 0.2);
+
+  > p {
+    color: #d7d7d7;
+  }
 }
 
 .banner {
-  color: $grey;
+  color: #d7d7d7;
   font-style: italic;
   margin-bottom: 0;
   text-transform: uppercase;
   text-align: center;
+  margin-bottom: 60px;
   transform: rotate(-10deg);
 
   &__title {
@@ -27,15 +31,5 @@
   &__caption {
     font-size: 22px;
     display: block;
-  }
-}
-
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: $content-padding-base;
-
-  > p {
-    text-align: center;
   }
 }
