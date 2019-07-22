@@ -4,7 +4,7 @@ module.exports = {
     '!./setup-tests.js',
     '!src/index.js',
   ],
-  setupFiles: ['@babel/polyfill'],
+  setupFiles: ['./src/polyfill'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
     '<rootDir>/src/**/?(*.)(spec|test).{js,jsx}',
