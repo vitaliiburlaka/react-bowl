@@ -24,7 +24,9 @@ const moduleFileExtensions = [
 
 // Style files regexes
 const cssRegex = /\.css$/
+const cssModuleRegex = /\.module\.css$/
 const sassRegex = /\.(scss|sass)$/
+const sassModuleRegex = /\.module\.(scss|sass)$/
 
 // Common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -112,10 +114,32 @@ module.exports = {
         use: getStyleLoaders({
           importLoaders: 1,
         }),
+        sideEffects: true,
+      },
+      // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
+      // using the extension .module.css
+      {
+        test: cssModuleRegex,
+        use: getStyleLoaders({
+          importLoaders: 1,
+        }),
       },
       {
         test: sassRegex,
-        use: getStyleLoaders({ importLoaders: 2 }, 'sass-loader'),
+        exclude: sassModuleRegex,
+        use: getStyleLoaders({ importLoaders: 3 }, 'sass-loader'),
+        sideEffects: true,
+      },
+      // Adds support for CSS Modules, but using SASS
+      // using the extension .module.scss or .module.sass
+      {
+        test: sassModuleRegex,
+        use: getStyleLoaders(
+          {
+            importLoaders: 3,
+          },
+          'sass-loader'
+        ),
       },
       {
         test: /\.(jpg?g|png|gif|svg)$/i,

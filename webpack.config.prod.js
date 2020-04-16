@@ -31,7 +31,9 @@ const moduleFileExtensions = [
 
 // Style files regexes
 const cssRegex = /\.css$/
+const cssModuleRegex = /\.module\.css$/
 const sassRegex = /\.(scss|sass)$/
+const sassModuleRegex = /\.module\.(scss|sass)$/
 
 // Common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -122,9 +124,17 @@ module.exports = env => ({
         },
       }),
     ],
-    runtimeChunk: true,
+    // Automatically split vendor and commons
+    // https://twitter.com/wSokra/status/969633336732905474
+    // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
     splitChunks: {
       chunks: 'all',
+      name: false,
+    },
+    // Keep the runtime chunk separated to enable long term caching
+    // https://twitter.com/wSokra/status/969679223278505985
+    runtimeChunk: {
+      name: entrypoint => `runtime-${entrypoint.name}`,
     },
   },
   resolve: {
@@ -160,22 +170,45 @@ module.exports = env => ({
       },
       {
         test: cssRegex,
+        exclude: cssModuleRegex,
         loader: getStyleLoaders({
           importLoaders: 1,
           sourceMap: shouldUseSourceMap,
         }),
         sideEffects: true,
       },
+      // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
+      // using the extension .module.css
+      {
+        test: cssModuleRegex,
+        use: getStyleLoaders({
+          importLoaders: 1,
+          sourceMap: isEnvProduction && shouldUseSourceMap,
+        }),
+      },
       {
         test: sassRegex,
+        exclude: sassModuleRegex,
         loader: getStyleLoaders(
           {
-            importLoaders: 2,
+            importLoaders: 3,
             sourceMap: shouldUseSourceMap,
           },
           'sass-loader'
         ),
         sideEffects: true,
+      },
+      // Adds support for CSS Modules, but using SASS
+      // using the extension .module.scss or .module.sass
+      {
+        test: sassModuleRegex,
+        use: getStyleLoaders(
+          {
+            importLoaders: 3,
+            sourceMap: isEnvProduction && shouldUseSourceMap,
+          },
+          'sass-loader'
+        ),
       },
       {
         test: /\.(jpg?g|png|gif|svg)$/i,
