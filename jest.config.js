@@ -1,13 +1,8 @@
 module.exports = {
   collectCoverageFrom: [
     'src/**/*.{js,jsx}',
-    '!./setup-tests.js',
+    '!./setupTests.js',
     '!src/index.js',
-  ],
-  setupFiles: ['./src/polyfill'],
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
-    '<rootDir>/src/**/?(*.)(spec|test).{js,jsx}',
   ],
   testEnvironment: 'jsdom',
   testURL: 'http://localhost',

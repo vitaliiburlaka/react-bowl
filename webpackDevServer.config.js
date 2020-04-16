@@ -12,6 +12,7 @@ module.exports = {
   hot: true,
   publicPath: '/',
   https: protocol === 'https',
+  port: 9000,
   overlay: true,
   historyApiFallback: {
     disableDotRule: true,

@@ -5,8 +5,13 @@ module.exports = {
     [
       '@babel/preset-env',
       {
+        // Allow importing core-js where it needed and use browserlist to select polyfills
         useBuiltIns: 'usage',
         corejs: 3,
+        // Do not transform modules to CJS
+        modules: false,
+        // Exclude transforms that make all code slower
+        exclude: ['transform-typeof-symbol'],
       },
     ],
     '@babel/preset-react',

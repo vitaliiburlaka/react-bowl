@@ -178,7 +178,7 @@ module.exports = env => ({
         sideEffects: true,
       },
       {
-        test: /\.(jpg|png|gif|svg)$/i,
+        test: /\.(jpg?g|png|gif|svg)$/i,
         use: [
           {
             loader: require.resolve('url-loader'),
@@ -190,7 +190,7 @@ module.exports = env => ({
         ],
       },
       {
-        test: /\.(otf|ttf|woff|woff2)$/,
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
           {
             loader: require.resolve('file-loader'),

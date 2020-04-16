@@ -130,7 +130,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(otf|ttf|woff|woff2)$/,
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
           {
             loader: require.resolve('file-loader'),

@@ -6,7 +6,7 @@ An React Boilerplate.
 
 ### Requirements
 
-- [Node.js](https://nodejs.org/en/) `>=v8.x.x`
+- [Node.js](https://nodejs.org/en/) `>=v10.x.x`
 - [ESLint](http://eslint.org/) plugin for your favorite IDE/Code Editor
 - [EditorConfig](http://editorconfig.org/) plugin for your favorite IDE/Code Editor
 
@@ -20,7 +20,7 @@ npm install
 
 ### Start Dev server
 
-It will start local http server at the `http://localhost:8080` by default.
+It will start local http server at the `http://localhost:9000` by default.
 
 ```bash
 npm start
