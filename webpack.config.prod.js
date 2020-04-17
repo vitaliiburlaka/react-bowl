@@ -74,7 +74,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
   return loaders
 }
 
-module.exports = env => ({
+module.exports = (env) => ({
   mode: 'production',
   // Stop compilation early in production
   bail: isEnvProduction,
@@ -134,12 +134,12 @@ module.exports = env => ({
     // Keep the runtime chunk separated to enable long term caching
     // https://twitter.com/wSokra/status/969679223278505985
     runtimeChunk: {
-      name: entrypoint => `runtime-${entrypoint.name}`,
+      name: (entrypoint) => `runtime-${entrypoint.name}`,
     },
   },
   resolve: {
     modules: [path.resolve(__dirname, 'node_modules'), appSrc],
-    extensions: moduleFileExtensions.map(ext => `.${ext}`),
+    extensions: moduleFileExtensions.map((ext) => `.${ext}`),
   },
   module: {
     strictExportPresence: true,

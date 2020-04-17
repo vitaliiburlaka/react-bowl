@@ -69,7 +69,7 @@ module.exports = {
     chunkFilename: 'static/js/[name].chunk.js',
     publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info => {
+    devtoolModuleFilenameTemplate: (info) => {
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
     },
   },
@@ -80,7 +80,7 @@ module.exports = {
   },
   resolve: {
     modules: [path.resolve(__dirname, 'node_modules'), appSrc],
-    extensions: moduleFileExtensions.map(ext => `.${ext}`),
+    extensions: moduleFileExtensions.map((ext) => `.${ext}`),
   },
   module: {
     strictExportPresence: true,

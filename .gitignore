@@ -2,9 +2,11 @@
 node_modules
 *~
 *.log*
-.eslintcache
-dist
+build/
+dist/
+coverage/
+fixtures/
 *.sublime-project
 *.sublime-workspace
 .vscode
-coverage
+.idea

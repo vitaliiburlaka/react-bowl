@@ -12,10 +12,10 @@
     "test": "cross-env NODE_ENV=test jest",
     "test:watch": "npm test -- --watch",
     "coverage": "npm test -- --coverage",
-    "lint": "eslint --ignore-path .gitignore --ext .js,.jsx .",
+    "lint": "eslint . --ext .js,.jsx",
     "lint:fix": "npm run lint -- --fix",
-    "format": "npm run prettier -- --write",
-    "prettier": "prettier \"**/*.{json,md,css,scss}\"",
+    "lint:prettier": "prettier \"**/*.{md,json,yml,scss,css}\" --check --ignore-path .gitignore",
+    "lint:prettier:fix": "prettier \"**/*.{md,json,yml,scss,css}\" --write --ignore-path .gitignore",
     "build": "cross-env NODE_ENV=production webpack -p --progress --config webpack.config.prod.js",
     "analyze": "npm run build -- --env.analyze"
   },
@@ -64,7 +64,7 @@
     "eslint-loader": "^4.0.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^3.0.0",
     "file-loader": "^6.0.0",
@@ -80,7 +80,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "postcss-safe-parser": "^4.0.2",
-    "prettier": "^1.18.2",
+    "prettier": "^2.0.4",
     "react-hot-loader": "^4.12.20",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.1.3",
@@ -95,7 +95,7 @@
     "*.{js,jsx}": [
       "eslint --ignore-path .gitignore --fix"
     ],
-    "*.{json,md,css,scss}": [
+    "*.{md,json,yml,scss,css}": [
       "prettier --write"
     ]
   },

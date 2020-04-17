@@ -14,12 +14,13 @@ module.exports = {
       classes: true,
     },
   },
-  extends: ['airbnb', 'prettier', 'prettier/react'],
+  extends: ['airbnb', 'plugin:prettier/recommended', 'prettier/react'],
   plugins: ['prettier', 'react-hooks'],
   rules: {
     'prettier/prettier': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'no-console': 'off',
+    'arrow-parens': ['error', 'always'],
     'import/no-extraneous-dependencies': [
       1,
       {
