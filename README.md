@@ -2,7 +2,7 @@
 
 An React Boilerplate.
 
-<hr />
+---
 
 ### Requirements
 
