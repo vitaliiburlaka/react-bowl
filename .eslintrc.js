@@ -18,8 +18,15 @@ module.exports = {
       version: 'detect',
     },
   },
-  extends: ['airbnb', 'plugin:prettier/recommended', 'prettier/react'],
-  plugins: ['prettier', 'react-hooks'],
+  extends: [
+    'eslint:recommended',
+    'plugin:import/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:react/recommended',
+    'plugin:prettier/recommended',
+    'prettier/react'
+  ],
+  plugins: ['import', 'react', 'prettier', 'react-hooks'],
   rules: {
     'no-console': 'off',
     'arrow-parens': ['error', 'always'],
