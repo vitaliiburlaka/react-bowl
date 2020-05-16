@@ -7,31 +7,37 @@ module.exports = {
   },
   parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 8,
+    ecmaVersion: 2018,
+    sourceType: 'module',
     ecmaFeatures: {
-      experimentalObjectRestSpread: true,
-      impliedStrict: true,
-      classes: true,
+      jsx: true,
+    },
+  },
+  settings: {
+    react: {
+      version: 'detect',
     },
   },
   extends: ['airbnb', 'plugin:prettier/recommended', 'prettier/react'],
   plugins: ['prettier', 'react-hooks'],
   rules: {
-    'prettier/prettier': 'error',
-    'react-hooks/rules-of-hooks': 'error',
     'no-console': 'off',
     'arrow-parens': ['error', 'always'],
+    'prettier/prettier': 'error',
     'import/no-extraneous-dependencies': [
       1,
       {
         devDependencies: true,
       },
     ],
+    'react-hooks/rules-of-hooks': 'error',
     'react/jsx-filename-extension': [
       1,
       {
         extensions: ['.js', '.jsx'],
       },
     ],
+    'react/require-default-props': 'off',
+    'react/state-in-constructor': [1, 'never']
   },
 }
