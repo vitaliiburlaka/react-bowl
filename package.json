@@ -16,6 +16,8 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:format": "prettier \"**/*.{md,json,yml,css}\" --check",
     "lint:format:fix": "prettier \"**/*.{md,json,yml,css}\" --write",
+    "lint:styles": "stylelint --ignore-path .gitignore --syntax scss **/*.scss",
+    "lint:styles:fix": "stylelint --ignore-path .gitignore --syntax scss **/*.scss --fix",
     "build": "cross-env NODE_ENV=production webpack -p --progress --config webpack.config.prod.js",
     "analyze": "npm run build -- --env.analyze"
   },
@@ -84,6 +86,9 @@
     "react-hot-loader": "^4.12.21",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
+    "stylelint": "^13.3.3",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-prettier": "^1.1.2",
     "terser-webpack-plugin": "^3.0.1",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
@@ -97,6 +102,9 @@
     ],
     "*.{md,json,yml,yaml,css}": [
       "prettier --write"
+    ],
+    "*.scss": [
+      "stylelint --syntax scss --fix"
     ]
   },
   "husky": {
