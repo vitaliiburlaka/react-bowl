@@ -1,33 +1,40 @@
-const isEnvProduction = process.env.NODE_ENV === 'production'
+// eslint-disable-next-line func-names
+module.exports = function (api) {
+  api.cache(true)
 
-module.exports = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        // Allow importing core-js where it needed and use browserlist to select polyfills
-        useBuiltIns: 'usage',
-        corejs: 3,
-        // Do not transform modules to CJS
-        modules: false,
-        // Exclude transforms that make all code slower
-        exclude: ['transform-typeof-symbol'],
-      },
+  return {
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          loose: true,
+          // Do not transform modules to CJS
+          modules: false,
+          // Exclude transforms that make all code slower
+          exclude: ['transform-typeof-symbol'],
+        },
+      ],
+      '@babel/preset-react',
     ],
-    '@babel/preset-react',
-  ],
-  plugins: [
-    !isEnvProduction && 'react-hot-loader/babel',
-    '@babel/plugin-transform-runtime',
-    '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-object-rest-spread',
-  ].filter(Boolean),
-  env: {
-    production: {
-      plugins: ['transform-react-remove-prop-types'],
+    plugins: [
+      ['@babel/plugin-proposal-class-properties', { loose: true }],
+      ['@babel/plugin-proposal-object-rest-spread', { useBuiltIns: true }],
+      ['transform-react-remove-prop-types', { removeImport: true }],
+    ].filter(Boolean),
+    env: {
+      test: {
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              targets: {
+                node: 'current',
+              },
+            },
+          ],
+          '@babel/preset-react',
+        ],
+      },
     },
-    test: {
-      presets: ['@babel/preset-env', '@babel/preset-react'],
-    },
-  },
+  }
 }

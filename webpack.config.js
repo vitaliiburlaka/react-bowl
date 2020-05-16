@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 /* eslint-disable global-require */
 
 const path = require('path')
@@ -9,15 +8,22 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const safePostCssParser = require('postcss-safe-parser')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-const publicPath = '/'
-const appBuild = path.resolve(__dirname, 'dist')
+const publicPath = process.env.PUBLIC_URL || ''
+const appBuild = path.resolve(__dirname, 'build')
 const appSrc = path.resolve(__dirname, './src')
 const appIndexJs = './src/index.js'
 const appIndexHtml = 'public/index.html'
-const shouldUseSourceMap = process.env.NODE_ENV !== 'production'
 const isEnvProduction = process.env.NODE_ENV === 'production'
+const isEnvDevelopment = process.env.NODE_ENV === 'development'
+const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
+const IMAGE_INLINE_SIZE_LIMIT = 10000
+
+const pkg = require('./package.json')
+
+const webpackDevServerConfig = require('./webpackDevServer.config')
 
 const moduleFileExtensions = [
   'web.mjs',
@@ -38,8 +44,12 @@ const sassModuleRegex = /\.module\.(scss|sass)$/
 // Common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
-    {
+    isEnvDevelopment && require.resolve('style-loader'),
+    isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
+      // css is located in `static/css`, use '../../' to locate index.html folder
+      // in production `publicPath` can be a relative path
+      options: publicPath.startsWith('.') ? { publicPath: '../../' } : {},
     },
     {
       loader: require.resolve('css-loader'),
@@ -59,39 +69,75 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
             stage: 3,
           }),
         ],
-        sourceMap: shouldUseSourceMap,
+        sourceMap: isEnvProduction && shouldUseSourceMap,
       },
     },
-  ]
+  ].filter(Boolean)
   if (preProcessor) {
-    loaders.push({
-      loader: require.resolve(preProcessor),
-      options: {
-        sourceMap: shouldUseSourceMap,
+    loaders.push(
+      {
+        loader: require.resolve('resolve-url-loader'),
+        options: {
+          sourceMap: shouldUseSourceMap,
+        },
       },
-    })
+      {
+        loader: require.resolve(preProcessor),
+        options: {
+          sourceMap: true,
+        },
+      }
+    )
   }
   return loaders
 }
 
 module.exports = (env) => ({
-  mode: 'production',
+  mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
   // Stop compilation early in production
   bail: isEnvProduction,
-  devtool: shouldUseSourceMap ? 'source-map' : false,
-  entry: appIndexJs,
+  // eslint-disable-next-line no-nested-ternary
+  devtool: isEnvProduction
+    ? shouldUseSourceMap
+      ? 'source-map'
+      : false
+    : isEnvDevelopment && 'cheap-module-source-map',
+  entry: isEnvDevelopment ? ['react-hot-loader/patch', appIndexJs] : appIndexJs,
   output: {
-    path: appBuild,
-    filename: 'static/js/[name].[chunkhash:8].js',
-    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
-    publicPath: publicPath,
+    path: isEnvProduction ? appBuild : undefined,
+    // Add /* filename */ comments to generated require()s in the output.
+    pathinfo: isEnvDevelopment,
+    filename: isEnvProduction
+      ? 'static/js/[name].[contenthash:8].js'
+      : isEnvDevelopment && 'static/js/bundle.js',
+    // TODO: remove this when upgrading to webpack 5
+    futureEmitAssets: true,
+    chunkFilename: isEnvProduction
+      ? 'static/js/[name].[contenthash:8].chunk.js'
+      : isEnvDevelopment && 'static/js/[name].chunk.js',
+    publicPath,
+    // Point sourcemap entries to original disk location (format as URL on Windows)
+    devtoolModuleFilenameTemplate: isEnvProduction
+      ? (info) =>
+          path.relative(appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
+      : isEnvDevelopment &&
+        ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+    // Prevents conflicts when multiple webpack runtimes (from different apps)
+    // are used on the same page.
+    jsonpFunction: `webpackJsonp${pkg.name}`,
   },
   optimization: {
     minimize: isEnvProduction,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
+          parse: {
+            // Parse ecma 8 code safe
+            ecma: 8,
+          },
           compress: {
+            ecma: 5,
+            warnings: false,
             comparisons: false,
             inline: 2,
           },
@@ -99,13 +145,14 @@ module.exports = (env) => ({
             safari10: true,
           },
           output: {
+            ecma: 5,
+            comments: false,
             // Turned on because emoji and regex is not minified properly using default
             ascii_only: true,
           },
         },
-        // Use multi-process parallel running to improve the build speed
+        // Use multi-process to improve the build speed
         parallel: true,
-        // Enable file caching
         cache: true,
         sourceMap: shouldUseSourceMap,
       }),
@@ -122,17 +169,15 @@ module.exports = (env) => ({
               }
             : false,
         },
+        cssProcessorPluginOptions: {
+          preset: ['default', { minifyFontValues: { removeQuotes: false } }],
+        },
       }),
     ],
-    // Automatically split vendor and commons
-    // https://twitter.com/wSokra/status/969633336732905474
-    // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
     splitChunks: {
       chunks: 'all',
       name: false,
     },
-    // Keep the runtime chunk separated to enable long term caching
-    // https://twitter.com/wSokra/status/969679223278505985
     runtimeChunk: {
       name: (entrypoint) => `runtime-${entrypoint.name}`,
     },
@@ -140,6 +185,7 @@ module.exports = (env) => ({
   resolve: {
     modules: [path.resolve(__dirname, 'node_modules'), appSrc],
     extensions: moduleFileExtensions.map((ext) => `.${ext}`),
+    alias: isEnvDevelopment ? { 'react-dom': '@hot-loader/react-dom' } : {},
   },
   module: {
     strictExportPresence: true,
@@ -154,18 +200,26 @@ module.exports = (env) => ({
           {
             loader: require.resolve('eslint-loader'),
             options: {
+              cache: true,
               ignore: false,
             },
           },
         ],
-        include: appSrc,
+        include: [appSrc],
       },
       {
         test: /\.(js|mjs|jsx)$/,
-        include: appSrc,
+        include: [appSrc],
         loader: require.resolve('babel-loader'),
         options: {
           compact: true,
+          plugins: [
+            isEnvDevelopment && 'react-hot-loader/babel',
+            isEnvProduction && [
+              'babel-plugin-transform-react-remove-prop-types',
+              { removeImport: true },
+            ],
+          ].filter(Boolean),
         },
       },
       {
@@ -211,12 +265,25 @@ module.exports = (env) => ({
         ),
       },
       {
-        test: /\.(jpg?g|png|gif|svg)$/i,
+        test: /\.svg$/,
+        use: [
+          '@svgr/webpack',
+          {
+            loader: require.resolve('url-loader'),
+            options: {
+              limit: IMAGE_INLINE_SIZE_LIMIT,
+              name: 'static/media/[name].[hash:8].[ext]',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(jpg?g|png|gif)$/i,
         use: [
           {
             loader: require.resolve('url-loader'),
             options: {
-              limit: 10000,
+              limit: IMAGE_INLINE_SIZE_LIMIT,
               name: 'static/media/[name].[hash:8].[ext]',
             },
           },
@@ -240,30 +307,44 @@ module.exports = (env) => ({
     new HtmlWebpackPlugin({
       inject: true,
       template: appIndexHtml,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeEmptyAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        keepClosingSlash: true,
-        minifyJS: true,
-        minifyCSS: true,
-        minifyURLs: true,
-      },
+      ...(isEnvProduction
+        ? {
+            minify: {
+              removeComments: true,
+              collapseWhitespace: true,
+              removeRedundantAttributes: true,
+              useShortDoctype: true,
+              removeEmptyAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              keepClosingSlash: true,
+              minifyJS: true,
+              minifyCSS: true,
+              minifyURLs: true,
+            },
+          }
+        : undefined),
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.PUBLIC_URL': JSON.stringify(process.env.PUBLIC_URL),
     }),
-    new MiniCssExtractPlugin({
-      filename: 'static/css/[name].[contenthash:8].css',
-      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-    }),
+    isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+    isEnvDevelopment && new CaseSensitivePathsPlugin(),
+    isEnvProduction &&
+      new MiniCssExtractPlugin({
+        // Optional options similar to the same options in webpackOptions.output
+        filename: 'static/css/[name].[contenthash:8].css',
+        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+      }),
     env &&
       env.analyze &&
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
       }),
   ].filter(Boolean),
+  devServer: isEnvDevelopment ? webpackDevServerConfig : {},
+  node: {
+    Buffer: false,
+    process: false,
+  },
 })
