@@ -92,9 +92,9 @@
     "stylelint": "^13.3.3",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-prettier": "^1.1.2",
-    "terser-webpack-plugin": "^3.0.1",
+    "terser-webpack-plugin": "^3.0.2",
     "url-loader": "^4.1.0",
-    "webpack": "^4.43.0",
+    "webpack": "^5.0.0-beta.16",
     "webpack-bundle-analyzer": "^3.7.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"

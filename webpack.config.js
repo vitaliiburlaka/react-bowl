@@ -110,8 +110,6 @@ module.exports = (env) => ({
     filename: isEnvProduction
       ? 'static/js/[name].[contenthash:8].js'
       : isEnvDevelopment && 'static/js/bundle.js',
-    // TODO: remove this when upgrading to webpack 5
-    futureEmitAssets: true,
     chunkFilename: isEnvProduction
       ? 'static/js/[name].[contenthash:8].chunk.js'
       : isEnvDevelopment && 'static/js/[name].chunk.js',
@@ -174,11 +172,11 @@ module.exports = (env) => ({
         },
       }),
     ],
-    splitChunks: {
+    splitChunks: isEnvProduction && {
       chunks: 'all',
       name: false,
     },
-    runtimeChunk: {
+    runtimeChunk: isEnvProduction && {
       name: (entrypoint) => `runtime-${entrypoint.name}`,
     },
   },
@@ -225,7 +223,7 @@ module.exports = (env) => ({
       {
         test: cssRegex,
         exclude: cssModuleRegex,
-        loader: getStyleLoaders({
+        use: getStyleLoaders({
           importLoaders: 1,
           sourceMap: shouldUseSourceMap,
         }),
@@ -243,7 +241,7 @@ module.exports = (env) => ({
       {
         test: sassRegex,
         exclude: sassModuleRegex,
-        loader: getStyleLoaders(
+        use: getStyleLoaders(
           {
             importLoaders: 3,
             sourceMap: shouldUseSourceMap,
@@ -343,8 +341,4 @@ module.exports = (env) => ({
       }),
   ].filter(Boolean),
   devServer: isEnvDevelopment ? webpackDevServerConfig : {},
-  node: {
-    Buffer: false,
-    process: false,
-  },
 })
