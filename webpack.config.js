@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 const path = require('path')
 const webpack = require('webpack')
@@ -33,6 +33,8 @@ const moduleFileExtensions = [
   'json',
   'web.jsx',
   'jsx',
+  'ts',
+  'tsx',
 ]
 
 // Style files regexes
@@ -196,7 +198,7 @@ module.exports = (env) => ({
       { parser: { requireEnsure: false } },
       // First, run the linter before Babel processed the JS.
       {
-        test: /\.(js|mjs|jsx)$/,
+        test: /\.(js|mjs|jsx|ts|tsx)$/,
         enforce: 'pre',
         use: [
           {
@@ -210,18 +212,14 @@ module.exports = (env) => ({
         include: [appSrc],
       },
       {
-        test: /\.(js|mjs|jsx)$/,
+        test: /\.(js|mjs|jsx|ts|tsx)$/,
         include: [appSrc],
         loader: require.resolve('babel-loader'),
         options: {
           compact: true,
-          plugins: [
-            isEnvDevelopment && 'react-hot-loader/babel',
-            isEnvProduction && [
-              'babel-plugin-transform-react-remove-prop-types',
-              { removeImport: true },
-            ],
-          ].filter(Boolean),
+          plugins: [isEnvDevelopment && 'react-hot-loader/babel'].filter(
+            Boolean
+          ),
         },
       },
       {

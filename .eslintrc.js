@@ -5,7 +5,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
@@ -21,12 +21,15 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:import/recommended',
+    'plugin:import/typescript',
     'plugin:jsx-a11y/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
-    'prettier/react'
+    'plugin:@typescript-eslint/recommended',
+    'prettier/react',
+    'prettier/@typescript-eslint',
   ],
-  plugins: ['import', 'react', 'prettier', 'react-hooks'],
+  plugins: ['import', 'react', 'prettier', 'react-hooks', '@typescript-eslint'],
   rules: {
     'no-console': 'off',
     'arrow-parens': ['error', 'always'],
@@ -37,14 +40,13 @@ module.exports = {
         devDependencies: true,
       },
     ],
+    'react/prop-types': 0,
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-filename-extension': [
-      1,
-      {
-        extensions: ['.js', '.jsx'],
-      },
+      2,
+      { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
     ],
     'react/require-default-props': 'off',
-    'react/state-in-constructor': [1, 'never']
+    'react/state-in-constructor': [1, 'never'],
   },
 }

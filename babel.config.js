@@ -14,12 +14,12 @@ module.exports = function (api) {
           exclude: ['transform-typeof-symbol'],
         },
       ],
+      '@babel/typescript',
       '@babel/preset-react',
     ],
     plugins: [
       ['@babel/plugin-proposal-class-properties', { loose: true }],
       ['@babel/plugin-proposal-object-rest-spread', { useBuiltIns: true }],
-      ['transform-react-remove-prop-types', { removeImport: true }],
     ].filter(Boolean),
     env: {
       test: {
@@ -32,6 +32,7 @@ module.exports = function (api) {
               },
             },
           ],
+          '@babel/typescript',
           '@babel/preset-react',
         ],
       },

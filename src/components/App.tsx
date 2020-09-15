@@ -1,9 +1,9 @@
-import React from 'react'
+import * as React from 'react'
 import { hot } from 'react-hot-loader/root'
 
 import './App.scss'
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
