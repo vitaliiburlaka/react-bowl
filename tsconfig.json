@@ -17,5 +17,11 @@
     "jsx": "react"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    "**/__tests__/**/*",
+    "**/__mocks__/**/*",
+    "**/build/**/*",
+    "**/dist/**/*"
+  ]
 }
