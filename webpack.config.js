@@ -21,8 +21,6 @@ const isEnvDevelopment = process.env.NODE_ENV === 'development'
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
 const IMAGE_INLINE_SIZE_LIMIT = 10000
 
-const pkg = require('./package.json')
-
 const webpackDevServerConfig = require('./webpackDevServer.config')
 
 const moduleFileExtensions = [
@@ -58,17 +56,19 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
     {
       loader: require.resolve('postcss-loader'),
       options: {
-        // Necessary for external CSS imports to work
-        ident: 'postcss',
-        plugins: () => [
-          require('postcss-flexbugs-fixes'),
-          require('postcss-preset-env')({
-            autoprefixer: {
-              flexbox: 'no-2009',
-            },
-            stage: 3,
-          }),
-        ],
+        postcssOptions: {
+          // Necessary for external CSS imports to work
+          ident: 'postcss',
+          plugins: () => [
+            require('postcss-flexbugs-fixes'),
+            require('postcss-preset-env')({
+              autoprefixer: {
+                flexbox: 'no-2009',
+              },
+              stage: 3,
+            }),
+          ],
+        },
         sourceMap: isEnvProduction && shouldUseSourceMap,
       },
     },
@@ -120,9 +120,6 @@ module.exports = (env) => ({
           path.relative(appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
       : isEnvDevelopment &&
         ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
-    // Prevents conflicts when multiple webpack runtimes (from different apps)
-    // are used on the same page.
-    jsonpFunction: `webpackJsonp${pkg.name}`,
   },
   optimization: {
     minimize: isEnvProduction,
