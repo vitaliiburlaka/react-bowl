@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   testURL: 'http://localhost',
   transform: {
-    '^.+\\.(js|jsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   moduleNameMapper: {
@@ -12,5 +12,5 @@ module.exports = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/src/__mocks__/fileMock.js',
   },
-  moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
 }
