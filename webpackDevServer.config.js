@@ -1,8 +1,14 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const fs = require('fs')
 const path = require('path')
 
-const appPublic = path.resolve(__dirname, 'public')
+const appPublic = path.join(__dirname, 'public')
 
 const protocol = process.env.HTTPS === 'true' ? 'https' : 'http'
+
+const proxy = fs.existsSync(path.join(__dirname, 'proxy.json'))
+  ? require(path.join(__dirname, 'proxy.json'))
+  : {}
 
 module.exports = {
   compress: true,
@@ -17,4 +23,5 @@ module.exports = {
   historyApiFallback: {
     disableDotRule: true,
   },
+  proxy,
 }
