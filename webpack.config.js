@@ -14,7 +14,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const publicPath = process.env.PUBLIC_URL || ''
 const appBuild = path.resolve(__dirname, 'build')
 const appSrc = path.resolve(__dirname, './src')
-const appIndexJs = './src/index.js'
+const appIndexJs = './src/index.tsx'
 const appIndexHtml = 'public/index.html'
 const isEnvProduction = process.env.NODE_ENV === 'production'
 const isEnvDevelopment = process.env.NODE_ENV === 'development'
