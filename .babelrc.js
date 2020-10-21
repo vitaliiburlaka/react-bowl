@@ -15,7 +15,9 @@ module.exports = function (api) {
         },
       ],
       '@babel/typescript',
-      '@babel/preset-react',
+      ['@babel/preset-react', {
+        'runtime': 'automatic'
+      }],
     ],
     plugins: [
       ['@babel/plugin-proposal-class-properties', { loose: true }],
@@ -33,7 +35,9 @@ module.exports = function (api) {
             },
           ],
           '@babel/typescript',
-          '@babel/preset-react',
+          ['@babel/preset-react', {
+            'runtime': 'automatic'
+          }]
         ],
       },
     },

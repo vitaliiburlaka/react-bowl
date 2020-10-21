@@ -24,4 +24,5 @@ module.exports = {
     disableDotRule: true,
   },
   proxy,
+  open: true,
 }

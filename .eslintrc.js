@@ -40,7 +40,9 @@ module.exports = {
         devDependencies: true,
       },
     ],
-    'react/prop-types': 0,
+    'react/prop-types': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-filename-extension': [
       2,
