@@ -17,4 +17,5 @@ module.exports = {
   historyApiFallback: {
     disableDotRule: true,
   },
+  open: true,
 }

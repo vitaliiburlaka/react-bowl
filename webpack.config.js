@@ -60,14 +60,17 @@ module.exports = function (env) {
           postcssOptions: {
             // Necessary for external CSS imports to work
             ident: 'postcss',
-            plugins: () => [
-              require('postcss-flexbugs-fixes'),
-              require('postcss-preset-env')({
-                autoprefixer: {
-                  flexbox: 'no-2009',
+            plugins: [
+              'postcss-flexbugs-fixes',
+              [
+                'postcss-preset-env',
+                {
+                  autoprefixer: {
+                    flexbox: 'no-2009',
+                  },
+                  stage: 3,
                 },
-                stage: 3,
-              }),
+              ],
             ],
           },
           sourceMap: isEnvProduction && shouldUseSourceMap,
@@ -153,8 +156,6 @@ module.exports = function (env) {
           },
           // Use multi-process to improve the build speed
           parallel: true,
-          cache: true,
-          sourceMap: shouldUseSourceMap,
         }),
         // This is only used in production mode
         new OptimizeCSSAssetsPlugin({
