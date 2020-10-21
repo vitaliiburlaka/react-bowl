@@ -24,7 +24,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
-    'prettier/react'
+    'prettier/react',
   ],
   plugins: ['import', 'react', 'prettier', 'react-hooks'],
   rules: {
@@ -37,6 +37,8 @@ module.exports = {
         devDependencies: true,
       },
     ],
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-filename-extension': [
       1,
@@ -45,6 +47,6 @@ module.exports = {
       },
     ],
     'react/require-default-props': 'off',
-    'react/state-in-constructor': [1, 'never']
+    'react/state-in-constructor': [1, 'never'],
   },
 }
