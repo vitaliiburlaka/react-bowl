@@ -99,6 +99,7 @@ module.exports = function (env) {
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
+    target: isEnvDevelopment ? 'web' : 'browserslist',
     // Stop compilation early in production
     bail: isEnvProduction,
     // eslint-disable-next-line no-nested-ternary
