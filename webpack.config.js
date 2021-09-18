@@ -4,8 +4,8 @@ const path = require('path')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const safePostCssParser = require('postcss-safe-parser')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const ESLintPlugin = require('eslint-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
@@ -19,7 +19,7 @@ const appIndexHtml = 'public/index.html'
 const isEnvProduction = process.env.NODE_ENV === 'production'
 const isEnvDevelopment = process.env.NODE_ENV === 'development'
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
-const IMAGE_INLINE_SIZE_LIMIT = 10000
+const imageInlineSizeLimit = 10000
 
 const webpackDevServerConfig = require('./webpackDevServer.config')
 
@@ -71,6 +71,10 @@ module.exports = function (env) {
                   stage: 3,
                 },
               ],
+              // Adds PostCSS Normalize as the reset css with default options,
+              // so that it honors browserslist config in package.json
+              // which in turn let's users customize the target behavior as per their needs.
+              'postcss-normalize',
             ],
           },
           sourceMap: isEnvProduction && shouldUseSourceMap,
@@ -159,22 +163,7 @@ module.exports = function (env) {
           parallel: true,
         }),
         // This is only used in production mode
-        new OptimizeCSSAssetsPlugin({
-          cssProcessorOptions: {
-            parser: safePostCssParser,
-            map: shouldUseSourceMap
-              ? {
-                  // Forces the sourcemap to be output into a separate file
-                  inline: false,
-                  // Appends the sourceMappingURL to the end of the css file
-                  annotation: true,
-                }
-              : false,
-          },
-          cssProcessorPluginOptions: {
-            preset: ['default', { minifyFontValues: { removeQuotes: false } }],
-          },
-        }),
+        new CssMinimizerPlugin(),
       ],
       splitChunks: isEnvProduction && {
         chunks: 'all',
@@ -191,29 +180,41 @@ module.exports = function (env) {
       rules: [
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
-        // First, run the linter before Babel processed the JS.
-        {
-          test: /\.(js|mjs|jsx)$/,
-          enforce: 'pre',
-          use: [
-            {
-              loader: require.resolve('eslint-loader'),
-              options: {
-                cache: true,
-                ignore: false,
-              },
-            },
-          ],
-          include: appSrc,
-        },
         {
           oneOf: [
             {
               test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-              loader: require.resolve('url-loader'),
-              options: {
-                limit: IMAGE_INLINE_SIZE_LIMIT,
-                name: 'static/media/[name].[hash:8].[ext]',
+              type: 'asset',
+              parser: {
+                dataUrlCondition: {
+                  maxSize: imageInlineSizeLimit,
+                },
+              },
+            },
+            {
+              test: /\.svg$/,
+              use: [
+                {
+                  loader: '@svgr/webpack',
+                  options: {
+                    prettier: false,
+                    svgo: false,
+                    svgoConfig: {
+                      plugins: [{ removeViewBox: false }],
+                    },
+                    titleProp: true,
+                    ref: true,
+                  },
+                },
+                {
+                  loader: 'file-loader',
+                  options: {
+                    name: 'static/media/[name].[hash].[ext]',
+                  },
+                },
+              ],
+              issuer: {
+                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
               },
             },
             {
@@ -245,6 +246,7 @@ module.exports = function (env) {
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction && shouldUseSourceMap,
+                modules: true,
               }),
             },
             {
@@ -265,31 +267,23 @@ module.exports = function (env) {
                 {
                   importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
+                  modules: true,
                 },
                 'sass-loader'
               ),
             },
+            // "file" loader makes sure those assets get served by WebpackDevServer.
+            // When you `import` an asset, you get its (virtual) filename.
+            // In production, they would get copied to the `build` folder.
+            // This loader doesn't use a "test" so it will catch all modules
+            // that fall through the other loaders.
             {
-              test: /\.svg$/,
-              use: [
-                '@svgr/webpack',
-                {
-                  loader: require.resolve('url-loader'),
-                  options: {
-                    limit: IMAGE_INLINE_SIZE_LIMIT,
-                    name: 'static/media/[name].[hash:8].[ext]',
-                  },
-                },
-              ],
-            },
-            // Use file-loader for everything else
-            {
-              loader: require.resolve('file-loader'),
-              // Exclude `js` `html` and `json`files
-              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-              options: {
-                name: 'static/media/[name].[hash:8].[ext]',
-              },
+              // Exclude `js` files to keep "css" loader working as it injects
+              // its runtime that would otherwise be processed through "file" loader.
+              // Also exclude `html` and `json` extensions so they get processed
+              // by webpacks internal loaders.
+              exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              type: 'asset/resource',
             },
             // Make sure to add the new loader(s) before the "file" loader.
           ],
@@ -335,6 +329,14 @@ module.exports = function (env) {
         new BundleAnalyzerPlugin({
           analyzerMode: 'static',
         }),
+      new ESLintPlugin({
+        // Plugin options
+        extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
+        eslintPath: require.resolve('eslint'),
+        failOnError: !isEnvDevelopment,
+        context: appSrc,
+        cache: true,
+      }),
     ].filter(Boolean),
     devServer: isEnvDevelopment ? webpackDevServerConfig : {},
   }

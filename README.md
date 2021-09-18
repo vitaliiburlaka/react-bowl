@@ -6,7 +6,7 @@ An React Boilerplate.
 
 ### Requirements
 
-- [Node.js](https://nodejs.org/en/) `>=v10.x.x`
+- [Node.js](https://nodejs.org/en/) `>=v12.x.x`
 - [ESLint](http://eslint.org/) plugin for your favorite IDE/Code Editor
 - [EditorConfig](http://editorconfig.org/) plugin for your favorite IDE/Code Editor
 
