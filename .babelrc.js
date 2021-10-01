@@ -1,6 +1,7 @@
 // eslint-disable-next-line func-names
 module.exports = function (api) {
-  api.cache(true)
+  // This caches the Babel config
+  api.cache.using(() => process.env.NODE_ENV);
 
   return {
     presets: [
@@ -14,9 +15,8 @@ module.exports = function (api) {
           exclude: ['transform-typeof-symbol'],
         },
       ],
-      ['@babel/preset-react', {
-        'runtime': 'automatic'
-      }],
+      // Enable development transform of React with new automatic runtime
+      ['@babel/preset-react', { development: !api.env('production'), runtime: 'automatic' }],
     ],
     plugins: [
       ['@babel/plugin-proposal-class-properties', { loose: true }],

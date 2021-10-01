@@ -1,5 +1,3 @@
-import { hot } from 'react-hot-loader/root'
-
 import './App.scss'
 
 function App() {
@@ -23,4 +21,4 @@ function App() {
   )
 }
 
-export default hot(App)
+export default App

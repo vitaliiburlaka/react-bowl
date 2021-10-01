@@ -10,6 +10,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 const publicPath = process.env.PUBLIC_URL || ''
 const appBuild = path.resolve(__dirname, 'build')
@@ -112,9 +113,7 @@ module.exports = function (env) {
         ? 'source-map'
         : false
       : isEnvDevelopment && 'cheap-module-source-map',
-    entry: isEnvDevelopment
-      ? ['react-hot-loader/patch', appIndexJs]
-      : appIndexJs,
+    entry: appIndexJs,
     output: {
       path: isEnvProduction ? appBuild : undefined,
       // Add /* filename */ comments to generated require()s in the output.
@@ -173,7 +172,6 @@ module.exports = function (env) {
     resolve: {
       modules: [path.resolve(__dirname, 'node_modules'), appSrc],
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
-      alias: isEnvDevelopment ? { 'react-dom': '@hot-loader/react-dom' } : {},
     },
     module: {
       strictExportPresence: true,
@@ -224,7 +222,7 @@ module.exports = function (env) {
               options: {
                 compact: true,
                 plugins: [
-                  isEnvDevelopment && 'react-hot-loader/babel',
+                  isEnvDevelopment && require.resolve('react-refresh/babel'),
                   isEnvProduction && [
                     'babel-plugin-transform-react-remove-prop-types',
                     { removeImport: true },
@@ -318,6 +316,7 @@ module.exports = function (env) {
       }),
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
       isEnvDevelopment && new CaseSensitivePathsPlugin(),
+      isEnvDevelopment && new ReactRefreshWebpackPlugin(),
       isEnvProduction &&
         new MiniCssExtractPlugin({
           // Optional options similar to the same options in webpackOptions.output
