@@ -112,7 +112,7 @@ module.exports = function (env) {
       ? shouldUseSourceMap
         ? 'source-map'
         : false
-      : isEnvDevelopment && 'cheap-module-source-map',
+      : isEnvDevelopment && 'inline-source-map', // cheap-module-source-map does not work in Chr
     entry: appIndexJs,
     output: {
       path: isEnvProduction ? appBuild : undefined,
